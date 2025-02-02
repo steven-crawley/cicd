@@ -2,7 +2,7 @@
 
 set -e -u -o pipefail
 declare -r SCRIPT_DIR=$(cd -P $(dirname $0) && pwd)
-declare PRJ_PREFIX="demo"
+declare PRJ_PREFIX="itt-demo"
 declare COMMAND="help"
 
 valid_command() {
@@ -115,10 +115,10 @@ command.install() {
   GITEA_HOSTNAME=$(oc get route gitea -o template --template='{{.spec.host}}' -n $cicd_prj)
 
   info "Initiatlizing git repository in Gitea and configuring webhooks"
-  WEBHOOK_URL=$(oc get route pipelines-as-code-controller -n pipelines-as-code -o template --template="{{.spec.host}}"  --ignore-not-found)
-  if [ -z "$WEBHOOK_URL" ]; then 
-      WEBHOOK_URL=$(oc get route pipelines-as-code-controller -n openshift-pipelines -o template --template="{{.spec.host}}")
-  fi
+ # WEBHOOK_URL=$(oc get route pipelines-as-code-controller -n pipelines-as-code -o template --template="{{.spec.host}}"  --ignore-not-found)
+  #if [ -z "$WEBHOOK_URL" ]; then 
+  WEBHOOK_URL=$(oc get route pipelines-as-code-controller -n openshift-pipelines -o template --template="{{.spec.host}}")
+  #fi
 
   sed "s/@HOSTNAME/$GITEA_HOSTNAME/g" config/gitea-configmap.yaml | oc create -f - -n $cicd_prj
   oc rollout status deployment/gitea -n $cicd_prj
